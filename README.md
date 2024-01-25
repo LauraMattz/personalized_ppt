@@ -1,4 +1,4 @@
-# 🌟 Projeto de Automação de PowerPoint
+# 🌟 Projeto de Automação de Apresentação no PowerPoint
 
 Este projeto consiste em um script Python 🐍 desenvolvido para automatizar a criação de apresentações do PowerPoint a partir de dados fornecidos em uma planilha do Excel 📊. Ideal para situações que requerem a personalização em massa de apresentações, como relatórios, certificados ou apresentações de engajamento.
 
