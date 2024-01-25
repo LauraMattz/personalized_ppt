@@ -39,7 +39,7 @@ def add_numbered_actions_with_formatting(text_frame, actions, font_size=Pt(14)):
 def update_presentation_with_white_text(ppt_model_path, row):
     ppt = Presentation(ppt_model_path)
     nome = row['Nome']
-    nivel_engajamento = row['Nível de Engajamento']
+    nivel_engajamento = row['Nível']
     acoes = [row[f'Ação {i}'] for i in range(1, 13) if not pd.isna(row[f'Ação {i}'])]
 
     for slide in ppt.slides:
