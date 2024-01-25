@@ -20,9 +20,3 @@ Você também precisará de:
 - 🖼️ Um modelo de apresentação do PowerPoint com placeholders.
 - 📑 Uma planilha do Excel com os dados para preenchimento.
 
-## 💻 Instalação
-
-Clone este repositório em sua máquina local usando:
-
-```bash
-git clone https://github.com/seu-usuario/seu-repositorio.git
