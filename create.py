@@ -6,14 +6,24 @@ from pptx.dml.color import RGBColor
 
 # Função para substituir texto em um parágrafo. Usa um placeholder e substitui pelo novo texto.
 def replace_text_in_paragraph_adjusted(paragraph, placeholder, new_text):
+    # Verifique se new_text é um número (int ou float) e, se for, formate como porcentagem
+    if isinstance(new_text, (int, float)):
+        new_text = f"{new_text:.0%}"  # Isso irá converter 0.85 para "85.00%" por exemplo.
+    
+    # Caso contrário, apenas certifique-se de que é uma string
+    else:
+        new_text = str(new_text)
+    
     full_text = ''.join(run.text for run in paragraph.runs)
     if placeholder in full_text:
-        new_full_text = full_text.replace(placeholder, new_text)
+        full_text = full_text.replace(placeholder, new_text)
+        # Limpa os runs existentes antes de adicionar o novo texto
         while len(paragraph.runs) > 0:
             paragraph._p.remove(paragraph.runs[0]._r)
-        paragraph.add_run().text = new_full_text
+        paragraph.add_run().text = full_text
         return True
     return False
+
 
 # Função para aplicar formatação especial (tamanho da fonte e negrito) a um parágrafo.
 def apply_special_formatting(paragraph, font_size, bold=True):
@@ -39,8 +49,8 @@ def add_numbered_actions_with_formatting(text_frame, actions, font_size=Pt(14)):
 def update_presentation_with_white_text(ppt_model_path, row):
     ppt = Presentation(ppt_model_path)
     nome = row['Nome']
-    nivel_engajamento = row['Nível']
-    acoes = [row[f'Ação {i}'] for i in range(1, 13) if not pd.isna(row[f'Ação {i}'])]
+    nivel = row['Nível']
+    acoes = [row[f'Ação {i}'] for i in range(1, 7) if not pd.isna(row[f'Ação {i}'])]
 
     for slide in ppt.slides:
         for shape in slide.shapes:
@@ -49,7 +59,7 @@ def update_presentation_with_white_text(ppt_model_path, row):
                     if replace_text_in_paragraph_adjusted(paragraph, "[nome]", nome):
                         apply_special_formatting(paragraph, Pt(28), bold=True)
                         apply_white_color_to_text(paragraph)
-                    if replace_text_in_paragraph_adjusted(paragraph, "[nivel_engajamento]", nivel_engajamento):
+                    if replace_text_in_paragraph_adjusted(paragraph, "[nivel]", nivel):
                         apply_special_formatting(paragraph, Pt(18), bold=True)
                         apply_white_color_to_text(paragraph)
                     if "[acoes]" in ''.join(run.text for run in paragraph.runs):
@@ -60,15 +70,19 @@ def update_presentation_with_white_text(ppt_model_path, row):
     return ppt
 
 # Definindo os caminhos para o modelo do PowerPoint e para a planilha de dados.
-# Substitua estes caminhos pelos caminhos reais onde seus arquivos estão localizados.
 ppt_model_path = '/content/modelo.pptx'  # Caminho para o arquivo modelo do PowerPoint.
-excel_data_path = '/content/Template.xlsx'  # Caminho para a planilha do Excel.
+excel_data_path = '/content/template.xlsx'  # Caminho para a planilha do Excel.
 
 # Carregando os dados da planilha de Excel.
 df_mass_upload = pd.read_excel(excel_data_path)
 
 # Processando cada linha da planilha para atualizar e salvar o PowerPoint correspondente.
 for index, row in df_mass_upload.iterrows():
+    # Gera a apresentação atualizada usando os dados da linha atual.
     updated_ppt = update_presentation_with_white_text(ppt_model_path, row)
-    updated_ppt_path = f'/content/drive/MyDrive/Minhapasta/{row["Nome do Arquivo"]}'
+    
+    # Define o caminho onde o PowerPoint atualizado será salvo.
+    updated_ppt_path = f'{row["Nome do Arquivo"]}'
+    
+    # Salva o arquivo PowerPoint atualizado no caminho especificado.
     updated_ppt.save(updated_ppt_path)
